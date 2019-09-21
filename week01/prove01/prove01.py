@@ -2,6 +2,7 @@ from sklearn import datasets
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import accuracy_score
+import user_interface as ui
 
 
 class HardCodedClassifier:
@@ -12,33 +13,7 @@ class HardCodedClassifier:
         return [0 for d in data_test]
 
 
-def selectDataset():
-    # Continue to get user input until a return statement is reached
-    while True:
-        user_input = input(
-            "Please enter a dataset to use (or type '-list' to see options)> ")
-
-        # list all options
-        if user_input == "-list":
-            print("Available datasets are \n'iris'" +
-                  "\n'digits'\n'wine'\n'breast cancer'")
-
-        # Load a classification dataset from sklearn
-        elif user_input == "iris":
-            print(user_input)
-            return datasets.load_iris()
-        elif user_input == "digits":
-            return datasets.load_digits()
-        elif user_input == "wine":
-            return datasets.load_wine()
-        elif user_input == "breast cancer":
-            return datasets.load_breast_cancer()
-
-        else:
-            print("Invalid input. Please try again.")
-
-
-def main(dataset):
+def main(dataset, split_size):
     # Show the data (the attributes of each instance)
     # print("\nDATA:")
     # print(dataset.data)
@@ -55,7 +30,7 @@ def main(dataset):
 
     # Split the data into a training set and a testing set
     data_train, data_test, targets_train, targets_test = train_test_split(
-        data, target, test_size=0.7)
+        data, target, test_size=split_size)
 
     # Train the model based on the training data
     classifier = GaussianNB()
@@ -82,8 +57,9 @@ def main(dataset):
 
 if __name__ == "__main__":
     print("USING THE IRIS DATSET: ")
-    main(datasets.load_iris())
+    main(datasets.load_iris(), 0.7)
 
     print("\nUSING A USER SELECTED DATASET: ")
-    dataset = selectDataset()
-    main(dataset)
+    dataset = ui.selectDataset()
+    split_size = ui.selectDataSplit()
+    main(dataset, split_size)
