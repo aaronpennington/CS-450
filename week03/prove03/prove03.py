@@ -134,7 +134,30 @@ def student_dataset():
     return X, y
 
 
+def poker_dataset():
+    names = ["s1", "c1", "s2", "c2", "s3",
+             "c3", "s4", "c4", "s5", "c5", "hand"]
+    data = pd.read_csv("poker-hand-training-true.data",
+                       header=None, names=names, na_values=["?"])
+
+    X = data.drop(columns=["hand"]).values
+    y = data["hand"].values.flatten()
+    return X, y
+
+
+def leaf_dataset():
+    # Since all data is numerical and present, we wont bother
+    # inputting header names.
+    data = pd.read_csv("leaf.csv", header=None, na_values=["?"])
+
+    X = data.drop(columns=[0]).values
+    y = data[0].values.flatten()
+    return X, y
+
+
 def main():
+    print("Sorry about the crazy runtime")
+
     # Test the CAR Dataset
     X, y = car_dataset()
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
@@ -152,7 +175,7 @@ def main():
     am_X_train, am_X_test, am_y_train, am_y_test = train_test_split(
         auto_mpg_X, auto_mpg_y, test_size=0.2)
 
-    regr = KNeighborsRegressor(n_neighbors=3)
+    regr = KNeighborsRegressor(n_neighbors=5)
     regr.fit(am_X_train, am_y_train)
     am_predictions = regr.predict(am_X_test)
 
@@ -173,6 +196,32 @@ def main():
     student_accuracy = r2_score(student_y_test, student_predictions)
     print("Accuracy of KNN Regression on Student Dataset: {}%".format(
         round(student_accuracy * 100, 2)))
+
+    # POKER database
+    poker_X, poker_y = poker_dataset()
+    p_X_train, p_X_test, p_y_train, p_y_test = train_test_split(
+        poker_X, poker_y, test_size=0.4)
+
+    poker_classifier = KNeighborsClassifier(n_neighbors=5)
+    poker_classifier.fit(p_X_train, p_y_train)
+    poker_predictions = poker_classifier.predict(p_X_test)
+
+    poker_accuracy = accuracy_score(p_y_test, poker_predictions)
+    print("Accuracy of KNN classifier on Poker Dataset: {}%".format(
+        round(poker_accuracy * 100, 2)))
+
+    # LEAF database
+    leaf_X, leaf_y = leaf_dataset()
+    l_X_train, l_X_test, l_y_train, l_y_test = train_test_split(
+        leaf_X, leaf_y, test_size=0.2)
+
+    leaf_classifier = KNeighborsClassifier(n_neighbors=5)
+    leaf_classifier.fit(l_X_train, l_y_train)
+    leaf_predictions = leaf_classifier.predict(l_X_test)
+
+    leaf_accuracy = accuracy_score(l_y_test, leaf_predictions)
+    print("Accuracy of KNN classifier on Leaf Dataset: {}%".format(
+        round(leaf_accuracy * 100, 2)))
 
 
 if __name__ == "__main__":
